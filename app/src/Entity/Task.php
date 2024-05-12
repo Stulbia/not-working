@@ -1,9 +1,12 @@
 <?php
+/**
+ * Task entity.
+ */
 
 namespace App\Entity;
 
 use App\Repository\TaskRepository;
-use Doctrine\DBAL\Types\Types;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -22,7 +25,7 @@ class Task
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[ORM\Column(type: 'integer')]
     private ?int $id = null;
 
     /**
@@ -32,8 +35,8 @@ class Task
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $createdAt = null;
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?DateTimeImmutable $createdAt;
 
     /**
      * Updated at.
@@ -42,16 +45,15 @@ class Task
      *
      * @psalm-suppress PropertyNotSetInConstructor
      */
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $updatedAt = null;
-
+    #[ORM\Column(type: 'datetime_immutable')]
+    private ?DateTimeImmutable $updatedAt;
 
     /**
      * Title.
      *
      * @var string|null
      */
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(type: 'string', length: 255)]
     private ?string $title = null;
 
     /**
@@ -69,7 +71,7 @@ class Task
      *
      * @return DateTimeImmutable|null Created at
      */
-    public function getCreatedAt(): ?\DateTimeInterface
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -79,11 +81,9 @@ class Task
      *
      * @param DateTimeImmutable|null $createdAt Created at
      */
-    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    public function setCreatedAt(?DateTimeImmutable $createdAt): void
     {
         $this->createdAt = $createdAt;
-
-        return $this;
     }
 
     /**
@@ -91,7 +91,7 @@ class Task
      *
      * @return DateTimeImmutable|null Updated at
      */
-    public function getUpdatedAt(): ?\DateTimeInterface
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -101,11 +101,9 @@ class Task
      *
      * @param DateTimeImmutable|null $updatedAt Updated at
      */
-    public function setUpdatedAt(\DateTimeInterface $updatedAt): static
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): void
     {
         $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     /**
@@ -123,10 +121,8 @@ class Task
      *
      * @param string|null $title Title
      */
-    public function setTitle(string $title): static
+    public function setTitle(?string $title): void
     {
         $this->title = $title;
-
-        return $this;
     }
 }
