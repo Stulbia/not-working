@@ -45,17 +45,22 @@ class TaskRepository extends ServiceEntityRepository
         parent::__construct($registry, Task::class);
     }
 
+
     /**
      * Query all records.
      *
-     * @return QueryBuilder Query builder
+     * @return \Doctrine\ORM\QueryBuilder Query builder
      */
     public function queryAll(): QueryBuilder
     {
         return $this->getOrCreateQueryBuilder()
+            ->select(
+                'partial task.{id, createdAt, updatedAt, title}',
+                'partial category.{id, title}'
+            )
+            ->join('task.category', 'category')
             ->orderBy('task.updatedAt', 'DESC');
     }
-
     /**
      * Get or create new query builder.
      *
