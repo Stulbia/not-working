@@ -15,7 +15,7 @@ parameters:
 {% block body %}
     <h1>{{ page_title }}</h1>
     {{ form_start(form) }}
-    {% if false == form.vars.valid %}
+  {% if false == form.vars.valid %}  {#  formularz nieprawidlowy, popraw pola#}
         {% include 'default/_single_alert_message.html.twig' with {
             type: 'danger',
             message: 'message.form_error'|trans,
