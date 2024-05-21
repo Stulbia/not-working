@@ -27,7 +27,8 @@ class Category
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]    private ?int $id = null;
+    #[ORM\Column(type: 'integer')]
+    private ?int $id = null;
 
     /**
      * Created at.
@@ -35,6 +36,7 @@ class Category
      * @var DateTimeImmutable|null
      */
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\Type(DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
     private ?DateTimeImmutable $createdAt = null;
 
@@ -44,6 +46,7 @@ class Category
      * @var DateTimeImmutable|null
      */
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Assert\Type(DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'update')]
     private ?DateTimeImmutable $updatedAt = null;
 
@@ -53,12 +56,15 @@ class Category
      * @var string|null
      */
     #[ORM\Column(type: 'string', length: 64)]
-    #[Gedmo\Slug(fields: ['title'])]
+//    #[Gedmo\Slug(fields: ['title'])]
+    #[Assert\Type('string')]
     #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
     private ?string $title = null;
 
     #[ORM\Column(length: 64, nullable: true)]
+    #[Assert\Type('string')]
+    #[Assert\Length(min: 3, max: 64)]
     #[Gedmo\Slug(fields: ['title'])]
     private ?string $slug = null;
 
