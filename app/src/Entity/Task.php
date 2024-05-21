@@ -8,6 +8,8 @@ namespace App\Entity;
 use App\Repository\TaskRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Class Task.
@@ -36,6 +38,7 @@ class Task
      * @psalm-suppress PropertyNotSetInConstructor
      */
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Gedmo\Timestampable(on: 'create')]
     private ?DateTimeImmutable $createdAt;
 
     /**
@@ -46,6 +49,7 @@ class Task
      * @psalm-suppress PropertyNotSetInConstructor
      */
     #[ORM\Column(type: 'datetime_immutable')]
+    #[Gedmo\Timestampable(on: 'update')]
     private ?DateTimeImmutable $updatedAt;
 
     /**
@@ -62,6 +66,15 @@ class Task
     #[ORM\ManyToOne(targetEntity: Category::class, fetch: 'EXTRA_LAZY')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
+
+
+    /**
+     * Slug.
+     * @var string|null
+     */
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[Gedmo\Slug(fields: ['title'])]
+    private ?string $slug = null;
 
     /**
      * Getter for Id.
@@ -141,6 +154,18 @@ class Task
     public function setCategory(?Category $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(?string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

@@ -25,6 +25,11 @@
             </tr>
             </thead>
             <tbody>
+
+            <a href="{{ url('task_create') }}" title="{{ 'action.create'|trans }}">
+                {{ 'action.create'|trans }}
+            </a>
+
             {% for task in pagination.items %}
                 <tr>
                     <td>{{ task.id }}</td>
