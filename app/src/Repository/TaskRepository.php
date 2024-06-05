@@ -54,6 +54,23 @@ class TaskRepository extends ServiceEntityRepository
             ->orderBy('task.updatedAt', 'DESC');
     }
 
+
+    /**
+     * Query tasks by author.
+     *
+     * @param User $user User entity
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryByAuthor(User $user): QueryBuilder
+    {
+        $queryBuilder = $this->queryAll();
+
+        $queryBuilder->andWhere('task.author = :author')
+            ->setParameter('author', $user);
+
+        return $queryBuilder;
+    }
     /**
      * Count tasks by category.
      *

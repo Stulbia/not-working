@@ -32,6 +32,7 @@ class TaskController extends AbstractController
     {
     }
 
+    // ...
     /**
      * Index action.
      *
@@ -42,11 +43,13 @@ class TaskController extends AbstractController
     #[Route(name: 'task_index', methods: 'GET')]
     public function index(#[MapQueryParameter] int $page = 1): Response
     {
-        $pagination = $this->taskService->getPaginatedList($page);
+        $pagination = $this->taskService->getPaginatedList(
+            $page,
+            $this->getUser()
+        );
 
         return $this->render('task/index.html.twig', ['pagination' => $pagination]);
     }
-
 /**
  * Show action.
  *
@@ -54,11 +57,24 @@ class TaskController extends AbstractController
  *
  * @return Response HTTP response
  */
-#[Route('/{id}', name: 'task_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
+
+    #[Route('/{id}', name: 'task_show', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
     public function show(Task $task): Response
-{
-    return $this->render('task/show.html.twig', ['task' => $task]);
-}
+    {
+        if ($task->getAuthor() !== $this->getUser()) {
+            $this->addFlash(
+                'warning',
+                $this->translator->trans('message.record_not_found')
+            );
+
+            return $this->redirectToRoute('task_index');
+        }
+
+        return $this->render(
+            'task/show.html.twig',
+            ['task' => $task]
+        );
+    }
 
     /**
      * Create action.
@@ -67,31 +83,36 @@ class TaskController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route('/create', name: 'task_create', methods: 'GET|POST', )]
+    #[Route('/create', name: 'task_create', methods: 'GET|POST')]
     public function create(Request $request): Response
-{
-    $task = new Task();
-    $form = $this->createForm(
-        TaskType::class,
-        $task,
-        ['action' => $this->generateUrl('task_create')]
-    );
-    $form->handleRequest($request);
-
-    if ($form->isSubmitted() && $form->isValid()) {
-        $this->taskService->save($task);
-
-        $this->addFlash(
-            'success',
-            $this->translator->trans('message.created_successfully')
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+        $task = new Task();
+        $task->setAuthor($user);
+        $form = $this->createForm(
+            TaskType::class,
+            $task,
+            ['action' => $this->generateUrl('task_create')]
         );
+        $form->handleRequest($request);
 
-        return $this->redirectToRoute('task_index');
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->taskService->save($task);
+
+            $this->addFlash(
+                'success',
+                $this->translator->trans('message.created_successfully')
+            );
+
+            return $this->redirectToRoute('task_index');
+        }
+
+        return $this->render(
+            'task/create.html.twig',
+            ['form' => $form->createView()]
+        );
     }
-
-    return $this->render('task/create.html.twig',  ['form' => $form->createView()]);
-}
-
     /**
      * Edit action.
      *
